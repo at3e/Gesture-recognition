@@ -14,10 +14,10 @@ np.random.seed()
 # load data
 
 Data = sio.loadmat('.\Data\TestDataSet.mat',matlab_compatible = True)
-#TestData = sio.loadmat('.\Data\TestDataSet.mat',matlab_compatible = True)
+
 Data.keys()
-Seqsfolds = Data['TestDataSet']
-#TestSeqsfolds = TestData['TestDataSet']
+folds = Data['DataSet']
+Testfolds = Data['TestDataSet']
 
 num_folds = 6
 dim_1 = 64
@@ -100,8 +100,8 @@ nepoch = 200
 perf = []
 for nfold in range (num_folds):
     num_batches = 5
-    nf = (nfold+3)%6
-    ran = np.random.permutation(6)
+    nf = (nfold+3)%num_folds
+    ran = np.random.permutation(num_folds)
     testfold = np.where(ran==nf)
     ran = np.delete(ran,testfold[0][0]) 
     
@@ -110,7 +110,7 @@ for nfold in range (num_folds):
         
         for bid in range(num_batches):
             batch_id = ran[bid]
-            Xbatch = train_batch_generator(Seqsfolds,batch_id)
+            Xbatch = train_batch_generator(folds,batch_id)
             ybatch = Xbatch[1]
             Xbatch = np.reshape(Xbatch[0],(80,64,2))
             
@@ -120,7 +120,7 @@ for nfold in range (num_folds):
                                 
     
                    
-    Xtest = train_batch_generator(Seqsfolds,nf)
+    Xtest = test_generator(Testfolds,nf)
     ytest = Xtest[1]
     Xtest = np.reshape(Xtest[0],(80,64,2))
     
